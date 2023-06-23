@@ -1,5 +1,5 @@
-# import pandas as pd
-from flask import Flask, redirect, url_for, request, render_template, flash, session, g
+import pandas as pd
+from flask import Flask, redirect, url_for, flash, request, render_template, flash, session, g
 from flask_session import Session
 import os.path
 from werkzeug.utils import secure_filename
@@ -20,18 +20,6 @@ allowed_extensions = {'csv', 'txt'}
 #NON-FLASK/APP FUNCTIONS
 #--------------------------------
 # def what_tag(ind):
-
-
-
-
-# def assign_tags(word_tags):
-#     global words
-#     #Iterrate all dictionarires in the list
-#     for word in word_tags:
-#         word_ind = list(word.keys())
-#         tags_list = word.values()
-#         words.iloc[word_ind]=str(tags_list)
-#     # save_words(words_filename)
 
 
 def load_tags(filename):
@@ -56,7 +44,6 @@ def open_db():
     if conn is None:
         conn = g._database = sqlite3.connect(db_file)
         conn.enable_load_extension(True)
-        conn.load_extension('./venv/lib/python3.11/site-packages/sqlite_regex/regex0.so')
     return conn
 
 
@@ -82,13 +69,29 @@ def show_index():
     # utils.add_demo_content(conn)
     return render_template("index.html")
 
+@app.route('/deleteall')
+def delete_all():
+    flash('Database will become empty')
+    global conn
+    conn = open_db()
+    utils.delete_all_data(conn)
+    return redirect("/")
+
+@app.route('/demo')
+def demo():
+    flash('Demo content was added')
+    global conn
+    conn = open_db()
+    utils.add_demo_content(conn)
+    return redirect("/words")
+
 
 @app.route('/words')
 def show_words():
     global conn
     conn = open_db()
     words = utils.get_words_from_db(conn)
-    return render_template("words.html", df=words)
+    return render_template("words.html", words=words)
 
 
 @app.route('/import', methods=['POST', 'GET'])
@@ -123,7 +126,6 @@ def import_words():
                 utils.tag_word_by_dict(conn, the_word, the_tag)
             conn.commit()
             return redirect("/words")
-    utils.delete_all_data(conn)
     return render_template("import.html")
 
 @app.route('/tags', methods=['GET', 'POST'])
@@ -158,9 +160,8 @@ def tag_words():
                 filter = f"'{the_form['filter']}'"
             else:
                 filter = f"'(?i){the_form['filter']}'"
-            words = utils.get_words_from_db(conn,filter)
+            words = utils.get_words_from_db(conn,the_form['filter'])
             tags = utils.get_tags_from_db(conn)
-            print(words)
             return render_template('tagwords.html', words=words, tags=tags)
         else:
             for word in the_form.items():

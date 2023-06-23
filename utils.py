@@ -75,9 +75,9 @@ def add_demo_content(conn):
     insert_word(conn, the_word)
 
     the_tag = {'page': a_word['page']}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
     the_tag = {'count': random.randint(1000,2000)}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
 
     a_word = {"page":10, "word":"Hallo Welt", "translation":"Hello over the world"}
     the_word = {'word':a_word['word'],
@@ -87,9 +87,9 @@ def add_demo_content(conn):
     insert_word(conn, the_word)
 
     the_tag = {'page': a_word['page']}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
     the_tag = {'count': random.randint(1000,2000)}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
 
     a_word = {"page": 10, "word": "Ja", "translation": "Yes"}
     the_word = {'word':a_word['word'],
@@ -99,9 +99,9 @@ def add_demo_content(conn):
     insert_word(conn, the_word)
 
     the_tag = {'page': a_word['page']}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
     the_tag = {'count': random.randint(1000, 2000)}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
 
     a_word = {"page": 10, "word": "genug", "translation": "Yes"}
     the_word = {'word':a_word['word'],
@@ -111,9 +111,9 @@ def add_demo_content(conn):
 
     insert_word(conn, the_word)
     the_tag = {'page': a_word['page']}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
     the_tag = {'count': random.randint(1000, 2000)}
-    tag_word(conn, the_word, the_tag)
+    tag_word_by_dict(conn, the_word, the_tag)
     conn.commit()
 
 
@@ -245,31 +245,28 @@ def get_words_from_db(conn, filter = ""):
               "tag_type.id=tag.tag_type_id " \
               "GROUP BY word.id"
     else:
-        sql = f"SELECT word.id, word.name, word.translation, " \
-              f"GROUP_CONCAT(tag.id), GROUP_CONCAT(tag.name), GROUP_CONCAT(tag_type.name) " \
-              f"FROM word, tagged, tag, tag_type " \
-              f"WHERE word.id=tagged.word_id AND " \
-              f"tagged.tag_id=tag.id AND " \
-              f"tag_type.id=tag.tag_type_id AND " \
-              f"word.name REGEXP {filter} " \
-              f"GROUP BY word.id"
+        sql = "SELECT word.id, word.name, word.translation, " \
+              "GROUP_CONCAT(tag.id), GROUP_CONCAT(tag.name), GROUP_CONCAT(tag_type.name) " \
+              "FROM word, tagged, tag, tag_type " \
+              "WHERE word.id=tagged.word_id AND " \
+              "tagged.tag_id=tag.id AND " \
+              "tag_type.id=tag.tag_type_id AND " \
+              f"word.name LIKE '%{filter}%' " \
+              "GROUP BY word.id"
     words = cur.execute(sql,).fetchall()
-    ret_value=[]
-    the_tags = {'tagid':[], 'keys':[], 'vals':[] }
-    word_row = {'id': [], 'word': [], 'translation': [], 'tags': []}
+    ret_value = []
     for word in words:
-        word_row['id']=word[0]
-        word_row['word'] = word[1]
-        word_row['translation'] = word[2]
-
         tag_ids = word[3].split(',')
         tag_vals = word[4].split(',')
         tag_keys = word[5].split(',')
+        the_tags = []
         for i in range(0,len(tag_ids)):
-            the_tags['tagid'].append(tag_ids[i])
-            the_tags['keys'].append(tag_keys[i])
-            the_tags['vals'].append(tag_vals[i])
-        word_row['tags'] = the_tags
+            tmp_tag = {"tagid":tag_ids[i], tag_keys[i]:tag_vals[i]}
+            the_tags.append(tmp_tag)
+        word_row = {'id': word[0],
+                    'word': word[1],
+                    'translation': word[2],
+                    'tags': the_tags}
         ret_value.append(word_row)
     return ret_value
 

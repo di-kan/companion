@@ -13,20 +13,23 @@
       </tr>
     </thead>
     <tbody>
-      {% for index, row in df.iterrows() %}
+      {% for word in words %}
       <tr>
-        <th scope="row">{{ index }}</th>
-        <td>{{ row['word'] }}</td>
-        <td>{{ row['translation'] }}</td>
-        <td>{{ row['page'] }}</td>
+        <th scope="row">{{ word['id'] }} </th>
+        <td>{{ word['word'] }}</td>
+        <td>{{ word['translation'] }}</td>
+        <td>{{ word['tags']['page'] }}</td>
         <td>
-          {% for key,value in row['tag'].items() %}
-          {% if key != "page" %}
           <div class="alert alert-primary" role="alert">
-            {{ key }}:{{ value }}<br>
-          </div>
-          {% endif %}
+          {% for tags in word['tags'] %}
+
+            {% for key,value in tags.items() %}
+              {% if key != "tagid" %}
+                  {{ key }}:{{ value }},
+              {% endif %}
+            {% endfor %}
           {% endfor %}
+          </div>
         </td>
       </tr>
       {% endfor %}
