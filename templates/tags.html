@@ -1,0 +1,42 @@
+{% include "header.html" %}
+{% include "menu.html" %}
+
+<hr>
+<form action="http://localhost:5000/tags" method="POST">
+    <label for="type">Type</label>
+    <input type="text" class="form-control" id="type" name="type" placeholder="Enter category of new tag">
+    <label for="tag">Name</label>
+    <input type="text" class="form-control" id="tag" name="tag" placeholder="Enter name of new tag">
+    <input type="submit" value="Add new"/>
+</form>
+
+
+<p class="h1">Tag List</p>
+<hr>
+{% for tag in tags %}
+{% for key,value in tag.items() %}
+<p class="h1">{{ key }}</p>
+<table class="table table-sm">
+  <thead>
+    <tr>
+        <th scope="col">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for val in value %}
+    <tr>
+        <td>{{ val }}</td>
+        <td>
+            <form action="http://localhost:5000/tags" method="POST">
+            <input type="hidden" id="to_delete" name="to_delete" value="{{ key }}:{{ val }}">
+            <input type="submit" value="X"/></form>
+        </td>
+    </tr>
+  {% endfor %}
+  {% endfor %}
+  </tbody>
+</table>
+<br>
+{% endfor %}
+
+{% include "footer.html" %}
