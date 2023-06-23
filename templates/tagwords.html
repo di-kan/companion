@@ -75,7 +75,7 @@
     </div>
     </form>
   <hr>
-  <form class="word-form" action="http://localhost:5000/tagwords", method="POST">
+  <form class="word-form" action="/tagwords", method="POST">
   <div class="table-responsive-sm">
   <button type="submit" class="btn btn-primary">Submit All</button>
 
@@ -149,7 +149,7 @@
   <hr>
 {% else %}
   <p class="h1">Regex search words</p>
-<form action="http://localhost:5000/tagwords" method="POST">
+<form action="/tagwords" method="POST">
   <div class="mb-3">
     <input type="text" class="form-control" name="filter" id="filter" aria-describedby="Regex filter">
   </div>

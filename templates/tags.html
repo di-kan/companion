@@ -2,7 +2,7 @@
 {% include "menu.html" %}
 
 <hr>
-<form action="http://localhost:5000/tags" method="POST">
+<form action="/tags" method="POST">
     <label for="type">Type</label>
     <input type="text" class="form-control" id="type" name="type" placeholder="Enter category of new tag">
     <label for="tag">Name</label>
@@ -27,7 +27,7 @@
     <tr>
         <td>{{ val }}</td>
         <td>
-            <form action="http://localhost:5000/tags" method="POST">
+            <form action="/tags" method="POST">
             <input type="hidden" id="to_delete" name="to_delete" value="{{ key }}:{{ val }}">
             <input type="submit" value="X"/></form>
         </td>
