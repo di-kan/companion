@@ -43,7 +43,6 @@ def open_db():
     conn = getattr(g,'_database', None)
     if conn is None:
         conn = g._database = sqlite3.connect(db_file)
-        conn.enable_load_extension(True)
     return conn
 
 
