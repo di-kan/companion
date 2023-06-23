@@ -52,6 +52,9 @@ def open_db():
 #--------------------------------
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = upload_folder
+app.secret_key = os.environ.get("SECRET_KEY")
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = 'filesystem'
 app.debug = True
 
 @app.teardown_appcontext
@@ -177,9 +180,5 @@ def tag_words():
 
 if __name__ == '__main__':
     conn = None
-    app.secret_key = os.environ.get("SECRET_KEY")
-    app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-    app.config['SESSION_PERMANENT'] = False
-    app.config['SESSION_TYPE'] = 'filesystem'
     Session(app)
     app.run()
