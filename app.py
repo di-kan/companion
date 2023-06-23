@@ -177,7 +177,7 @@ def tag_words():
 
 if __name__ == '__main__':
     conn = None
-    app.secret.key = os.environ.get("SECRET_KEY")
+    app.secret_key = os.environ.get("SECRET_KEY")
     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_TYPE'] = 'filesystem'
