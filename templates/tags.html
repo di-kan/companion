@@ -3,40 +3,58 @@
 
 <hr>
 <form action="/tags" method="POST">
-    <label for="type">Type</label>
-    <input type="text" class="form-control" id="type" name="type" placeholder="Enter category of new tag">
-    <label for="tag">Name</label>
-    <input type="text" class="form-control" id="tag" name="tag" placeholder="Enter name of new tag">
-    <input type="submit" value="Add new"/>
+<div class="container w-50">
+    <div class="row">
+        <label for="type" class="col-2">Type</label>
+        <div class="col">
+            <input type="text" class="form-control" id="type" name="type" placeholder="Enter category of new tag">
+        </div>
+    </div>
+    <div class="row">
+        <label for="tag" class="col-2">Name</label>
+        <div class="col">
+            <input type="text" class="form-control" id="tag" name="tag" placeholder="Enter name of new tag">
+        </div>
+    </div>
+        <div class="col">
+            <input type="submit" class="btn btn-primary" value="Add new"/>
+        </div>
+</div>
 </form>
 
 
-<p class="h1">Tag List</p>
-<hr>
-{% for tag in tags %}
-{% for key,value in tag.items() %}
-<p class="h1">{{ key }}</p>
-<table class="table table-sm">
-  <thead>
-    <tr>
-        <th scope="col">Type</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for val in value %}
-    <tr>
-        <td>{{ val }}</td>
-        <td>
-            <form action="/tags" method="POST">
-            <input type="hidden" id="to_delete" name="to_delete" value="{{ key }}:{{ val }}">
-            <input type="submit" value="X"/></form>
-        </td>
-    </tr>
-  {% endfor %}
-  {% endfor %}
-  </tbody>
-</table>
-<br>
-{% endfor %}
+<div class="container w-75 mt-5"><p class="h1 text-center">Tag List</p><hr></div>
+
+<div class="container w-50">
+    <div class="row justify-content-center">
+    {% for tag in tags %}
+    {% for key,value in tag.items() %}
+        <div class="col w-25">
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                <th class="table-dark text-center"><h3>{{ key }}</h3></th>
+                <th class="table-dark text-center"></th>
+                </tr>
+                </thead>
+              <tbody>
+              {% for val in value %}
+                <tr class="align-middle">
+                    <td class="text-center text-wrap">{{ val }}</td>
+                    <td>
+                        <form action="/tags" method="POST">
+                            <input type="hidden" id="to_delete" name="to_delete" value="{{ key }}:{{ val }}">
+                            <button type="submit" class="btn"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+              {% endfor %}
+              {% endfor %}
+              </tbody>
+            </table>
+        </div>
+    {% endfor %}
+    </div>
+</div>
 
 {% include "footer.html" %}

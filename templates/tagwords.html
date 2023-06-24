@@ -78,72 +78,73 @@
   <form class="word-form" action="/tagwords", method="POST">
   <div class="table-responsive-sm">
   <button type="submit" class="btn btn-primary">Submit All</button>
-
+    <div class="container w-75">
   <table class="table">
     <thead>
       <tr>
-        <th scope="col" >#</th>
-        <th scope="col" >Page</th>
-        <th scope="col" >Word</th>
-        <th scope="col" >Translation</th>
-        <th scope="col" >Tags</th>
+        <th scope="col" class="25">#</th>
+        <th scope="col" class="25" >Page</th>
+        <th scope="col" class="50" >Word</th>
+        <th scope="col" class="50" >Translation</th>
+        <th scope="col" class="75" >Tags</th>
       </tr>
     </thead>
     <tbody>
     {# Iterate all words (list) #}
       {% for word in words %}
-      <tr>
-        <th scope="row">{{ index }}</th>
-        <td>{{ word['page'] }}</td>
+    <tr>
+        {% set word_tag_types = [] %}
+        {% set word_tags = [] %}
+        {% set pages = [] %}
+        {% for tag in word['tags'] %}
+            {% for key,value in tag.items() %}
+                {% if key != 'tagid' %}
+                    {% if key == 'page' %}
+                        {% set _= pages.append(value)%}
+                    {% else %}
+                        {% set _ = word_tag_types.append(key) %}
+                        {% set _ = word_tags.append(value) %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <th scope="row">{{ word['id'] }}</th>
+        {% set word_id = word['id'] %}
+        <td>{{ pages|join(",") }}</td>
         <td>{{ word['word'] }}</td>
         <td>{{ word['translation'] }}</td>
-
         <td>
             <div class="container">
-              <div class="row">
-                {% for tag in tags %}
-                  {% for key, values in tag.items() %}
-                  {% if key != "page" %}
-                  <div class="col">{{ key }}
-                    {% for val in values %}
-                      <div class="form-check">
-{% set noun_m_indexes = word['tags']['keys'] | select('equalto', key) | list %}
-                        {{ noun_m_indexes }}
-{% set m_indexes = word['tags']['vals'] | select('equalto', val) | list %}
-{% set common_indexes = [] %}
-{% for index in noun_m_indexes %}
-    {% if index in m_indexes %}
-        {% set _ = common_indexes.append(index) %}
-    {% endif %}
-{% endfor %}
-{% set result = common_indexes | length > 0 %}
-{{ result }}
-
-
-
-
-
-
-
-
-
-
-                        {{ word['tags']['keys'] | select('equalto', key) | list }}
-                        <input class="form-check-input" type="checkbox" name="{{ key }}-{{ val }}" id="{{ key }}-{{ val }}">
-                        <label class="form-check-label" for="{{ key }}-{{ val }}">{{ val }}</label>
-                      </div>
-                    {% endfor %}
-                  </div>
-                  {% endif %}
-                  {% endfor %}
+                    {% for tag in tags %}
+                        <div class="row">
+                        {% for key, values in tag.items() %}
+                            {% if key != "page" %}
+                                <div class="col"><strong>{{ key }}</strong></div>
+                                <div class="col">
+                                {% for val in values %}
+                                    {% if (val in word_tags) and (key in word_tag_types) %}
+                                        {% set checked = "checked" %}
+                                    {% endif %}
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="{{ word_id }}-{{ key }}-{{ val }}" id="{{ word_id }}-{{ key }}-{{ val }}" {{ checked }}>
+                                            <label class="form-check-label" for="{{ word_id }}-{{ key }}-{{ val }}">{{ val }}</label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                            <hr>
+                        {% endfor %}
+                        </div>
                 {% endfor %}
-              </div>
             </div>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
   </div>
   </form>
   <hr>

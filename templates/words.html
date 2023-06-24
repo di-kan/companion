@@ -2,14 +2,15 @@
 {% include "menu.html" %}
 <p class="h1">Words List</p>
 <hr>
-  <table class="table">
+  <div class="container">
+  <table class="table table-hover table-bordered w-50">
     <thead>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Word</th>
-        <th scope="col">Translation</th>
-        <th scope="col">Page</th>
-        <th scope="col">Tags</th>
+        <th scope="col" class="w-25">#</th>
+        <th scope="col" class="w-50">Word</th>
+        <th scope="col" class="w-50">Translation</th>
+        <th scope="col" class="w-25">Page</th>
+        <th scope="col "class="w-75">Tags</th>
       </tr>
     </thead>
     <tbody>
@@ -18,22 +19,30 @@
         <th scope="row">{{ word['id'] }} </th>
         <td>{{ word['word'] }}</td>
         <td>{{ word['translation'] }}</td>
-        <td>{{ word['tags']['page'] }}</td>
-        <td>
-          <div class="alert alert-primary" role="alert">
-          {% for tags in word['tags'] %}
-
-            {% for key,value in tags.items() %}
-              {% if key != "tagid" %}
-                  {{ key }}:{{ value }},
-              {% endif %}
+            {% set pages = [] %}
+            {% set other_tags = [] %}
+            {% for tags in word['tags'] %}
+              {% for key,value in tags.items() %}
+                {% if key != "tagid" %}
+                  {% if key == 'page' %}
+                    {% set _ = pages.append(value) %}
+                  {% else %}
+                    {% set val = key ~ ":" ~ value %}
+                    {% set _ = other_tags.append(val)%}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
             {% endfor %}
-          {% endfor %}
-          </div>
+        <td> {{ pages|join(", ") }} </td>
+        <td>
+          <i class="bi bi-bookmark-check"></i>
+          {{ other_tags|join(", ") }}</td>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
+{{ pages }}
 
 {% include "footer.html" %}
