@@ -41,7 +41,7 @@ def initialize_database(conn):
         tag_type_id INTEGER KEY NOT NULL, 
         name VARCHAR NOT NULL,
         FOREIGN KEY (tag_type_id) REFERENCES tag(id),
-        UNIQUE (name) ON CONFLICT IGNORE
+        UNIQUE (name, tag_type_id) ON CONFLICT IGNORE
         );''')
     if table_exists(cur, "tagged") == False:
         conn.execute('''CREATE TABLE tagged (
