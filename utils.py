@@ -51,6 +51,7 @@ def initialize_database(conn):
         FOREIGN KEY (word_id) REFERENCES word(id),
         FOREIGN KEY (tag_id) REFERENCES tag(id)
         );''')
+    insert_languages(conn)
     conn.commit()
 
 def delete_table(conn, table):
@@ -76,10 +77,8 @@ def add_demo_content(conn):
 
     the_tag = {'page': a_word['page']}
     tag_word_by_dict(conn, the_word, the_tag)
-    the_tag = {'count': random.randint(1000,2000)}
-    tag_word_by_dict(conn, the_word, the_tag)
 
-    a_word = {"page":10, "word":"Hallo Welt", "translation":"Hello over the world"}
+    a_word = {"page":12, "word":"Hallo Welt", "translation":"Hello over the world"}
     the_word = {'word':a_word['word'],
                 'translation':a_word['translation'],
                 'from':'german',
@@ -88,10 +87,8 @@ def add_demo_content(conn):
 
     the_tag = {'page': a_word['page']}
     tag_word_by_dict(conn, the_word, the_tag)
-    the_tag = {'count': random.randint(1000,2000)}
-    tag_word_by_dict(conn, the_word, the_tag)
 
-    a_word = {"page": 10, "word": "Ja", "translation": "Yes"}
+    a_word = {"page": 14, "word": "Ja", "translation": "Yes"}
     the_word = {'word':a_word['word'],
                 'translation':a_word['translation'],
                 'from':'german',
@@ -100,10 +97,8 @@ def add_demo_content(conn):
 
     the_tag = {'page': a_word['page']}
     tag_word_by_dict(conn, the_word, the_tag)
-    the_tag = {'count': random.randint(1000, 2000)}
-    tag_word_by_dict(conn, the_word, the_tag)
 
-    a_word = {"page": 10, "word": "genug", "translation": "Yes"}
+    a_word = {"page": 15, "word": "genug", "translation": "Yes"}
     the_word = {'word':a_word['word'],
                 'translation':a_word['translation'],
                 'from':'german',
@@ -112,8 +107,24 @@ def add_demo_content(conn):
     insert_word(conn, the_word)
     the_tag = {'page': a_word['page']}
     tag_word_by_dict(conn, the_word, the_tag)
-    the_tag = {'count': random.randint(1000, 2000)}
-    tag_word_by_dict(conn, the_word, the_tag)
+
+    tags = [{"noun":"masculine"},
+            {"noun":"feminine"},
+            {"noun":"neutral"},
+            {"verb": "regular"},
+            {"verb": "iregular"},
+            {"verb": "modalverb"},
+            {"verb": "seperating"},
+            {"adjective": "general"},
+            {"adverb": "general"},
+            {"other": "general"},
+            {"phrase": "general"},
+            ]
+    for a_tag in tags:
+        insert_tag_type(conn,a_tag,"german")
+        insert_tag(conn,a_tag)
+
+
     conn.commit()
 
 
@@ -126,6 +137,7 @@ def insert_languages(conn):
 
 def get_id(conn, table, criteria):
     #find the id of the name
+    #THIS HAS TO BE SPECIFIC FOR EACH TABLE WITH DIFFERNET PARAMETERS
     cur = conn.cursor()
     for key, value in criteria.items():
         key = key
@@ -136,6 +148,15 @@ def get_id(conn, table, criteria):
         ids = ids[0][0]
     else:
         ids = 0
+    return ids
+
+
+def get_tag_id(conn, name, tag_type_id):
+    cur = conn.cursor()
+    table = "tag"
+    sql = f"SELECT id FROM {table} WHERE name=? AND tag_type_id=?"
+    ids = cur.execute(sql,(name, tag_type_id,)).fetchall()
+    ids = ids[0][0]
     return ids
 
 
@@ -169,7 +190,9 @@ def tag_word_by_id(conn, word_id, a_tag):
 
     the_key = list(a_tag.keys())[0]
     tag_type_id = get_id(conn, 'tag_type',{'name':the_key})
-    tag_id = get_id(conn, 'tag', {'name': a_tag[the_key]})
+    print({'name': a_tag[the_key]})
+    tag_id = get_tag_id(conn, a_tag[the_key], tag_type_id)
+    print(tag_id)
 
     #finally tag word
     sql = "INSERT INTO tagged(word_id, tag_id) VALUES(?,?)"
@@ -230,10 +253,13 @@ def insert_word(conn, a_word):
     cur.execute(sql, (a_word['word'], from_lang_id, a_word['translation'], to_lang_id))
     return cur.lastrowid
 
+
 def get_word_dict(conn, the_id):
     cur = conn.cursor()
     sql = "SELECT * FROM word WHERE id=?"
     cur.execute(sql, (the_id,))
+
+
 def get_words_from_db(conn, filter = ""):
     cur = conn.cursor()
     if filter == "":
