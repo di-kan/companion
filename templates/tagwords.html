@@ -53,6 +53,17 @@
 
 {% if words is defined %}
   <p class="h1">Assign tags to words</p>
+    <p>
+        TODO:
+        <ul>
+            <li>Display a list of the filtered words from the previous step</li>
+            <li>Provide a new column with a select element</li>
+            <li>Provide a new column with the current tags each word has</li>
+            <li>Provide two button, select all, deselect all</li>
+            <li>Provide a list of current tags as well as one tag option that removes all tags (except pages)</li>
+            <li>Everything will be in one form, with a tag button that will tag all selected words to the selected tags</li>
+        </ul>
+    </p>
   <hr>
     <form class="template-form" id="template-form">
     <div class="container">
@@ -158,8 +169,22 @@
     <input type="checkbox" class="form-check-input" name="case-sensitive" id="case-sensitive">
     <label class="form-check-label" for="case-sensitive">Case sensitive</label>
   </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary">Filter Words</button>
 </form>
+<br><br>
+<hr>
+<p>
+    TODO: Provide filters for words:
+    <ul>
+        <li>Number of characters</li>
+        <li>Starting with ...</li>
+        <li>Ending with ...</li>
+        <li>Total number of characters</li>
+        <li>Word contains ...</li>
+        <li>Not tagged ...</li>
+        <li>Tagged with ...</li>
+    </ul>
+</p>
 {% endif %}
 
 {% include "footer.html" %}

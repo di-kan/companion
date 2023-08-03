@@ -57,12 +57,18 @@ app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 app.debug = True
 
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
+
+@app.route('/test')
+def test():
+    who = Person('dimitris', 44)
+    return render_template("test.html", person=who)
 
 @app.route('/')
 def show_index():
